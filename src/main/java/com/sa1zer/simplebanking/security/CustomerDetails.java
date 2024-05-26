@@ -14,7 +14,7 @@ public class CustomerDetails implements UserDetails {
 
     private List<GrantedAuthority> authorities;
     private String password;
-    private String email;
+    private String login;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -28,7 +28,7 @@ public class CustomerDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return login;
     }
 
     @Override
