@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -18,8 +19,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final CustomerRepo customerRepo;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Customer customer = customerRepo.findByEmail(username).orElseThrow(() ->
+        Customer customer = customerRepo.findByLoginOrEmail(username, username).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Customer not found with %s email", username)));
 
         return buildDetails(customer);
@@ -27,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private UserDetails buildDetails(Customer customer) {
         return CustomerDetails.builder()
-                .email(customer.getEmail().get(0).getEmail())
+                .login(customer.getLogin())
                 .password(customer.getPassword())
                 .build();
     }

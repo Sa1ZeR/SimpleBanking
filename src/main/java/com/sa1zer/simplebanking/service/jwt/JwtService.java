@@ -44,7 +44,7 @@ public class JwtService {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("id",  customer.getId());
-        claims.put("email",  customer.getEmail());
+        claims.put("login",  customer.getLogin());
 
         return TOKEN_PREFIX + Jwts.builder()
                 .issuedAt(now)
@@ -76,16 +76,16 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails user = userDetailsService.loadUserByUsername(getUserEmail(token));
+        UserDetails user = userDetailsService.loadUserByUsername(getUserLogin(token));
 
         return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
 
-    public String getUserEmail(String token) {
+    public String getUserLogin(String token) {
         Jws<Claims> jwtClaims = parseToken(token);
 
-        return (String) jwtClaims.getPayload().get("email");
+        return (String) jwtClaims.getPayload().get("login");
     }
 
     private Jws<Claims> parseToken(String token) {
