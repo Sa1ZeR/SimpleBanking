@@ -12,6 +12,7 @@ public record CustomerDto(
         String firstname,
         String lastname,
         String surname,
+        String name,
         String login,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy") LocalDate birthday,
         List<String> emails,

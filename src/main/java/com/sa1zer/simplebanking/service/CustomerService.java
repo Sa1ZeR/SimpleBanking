@@ -3,6 +3,8 @@ package com.sa1zer.simplebanking.service;
 import com.sa1zer.simplebanking.entity.Customer;
 import com.sa1zer.simplebanking.entity.Email;
 import com.sa1zer.simplebanking.entity.Phone;
+import com.sa1zer.simplebanking.payload.dto.CustomerDto;
+import com.sa1zer.simplebanking.payload.request.CustomerSearchFilter;
 import com.sa1zer.simplebanking.repo.CustomerRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -139,5 +142,9 @@ public class CustomerService {
         phone.setPhone(newValue);
 
         log.info("Phone {} successfully changed by {} for {}", oldValue, newValue, customer.getLogin());
+    }
+
+    public List<Customer> findAllByFilter(CustomerSearchFilter request) {
+        return customerRepo.findAllByFilter(request);
     }
 }

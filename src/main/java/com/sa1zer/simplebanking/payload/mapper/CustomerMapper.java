@@ -22,6 +22,7 @@ public class CustomerMapper implements Mapper<Customer, CustomerDto> {
                 .firstname(from.getFirstname())
                 .lastname(from.getLastname())
                 .surname(from.getSurname())
+                .name(from.getName())
                 .emails(from.getEmail().stream().map(Email::getEmail).collect(Collectors.toList()))
                 .phones(from.getPhones().stream().map(Phone::getPhone).collect(Collectors.toList()))
                 .account(mapper.map(from.getAccount()))

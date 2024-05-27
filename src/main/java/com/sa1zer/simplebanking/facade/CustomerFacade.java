@@ -7,6 +7,7 @@ import com.sa1zer.simplebanking.entity.Phone;
 import com.sa1zer.simplebanking.payload.dto.CustomerDto;
 import com.sa1zer.simplebanking.payload.mapper.CustomerMapper;
 import com.sa1zer.simplebanking.payload.request.CreateCustomerRequest;
+import com.sa1zer.simplebanking.payload.request.CustomerSearchFilter;
 import com.sa1zer.simplebanking.payload.request.EditContactsRequest;
 import com.sa1zer.simplebanking.payload.request.UpdateContactsRequest;
 import com.sa1zer.simplebanking.repo.CustomerRepo;
@@ -145,5 +146,11 @@ public class CustomerFacade {
         log.info("Customer Contacts successfully updated for {}", customer.getLogin());
 
         return customerMapper.map(customer);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CustomerDto> search(CustomerSearchFilter request) {
+        return customerService.findAllByFilter(request).stream()
+                .map(customerMapper::map).toList();
     }
 }

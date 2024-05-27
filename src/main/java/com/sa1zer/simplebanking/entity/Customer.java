@@ -34,6 +34,9 @@ public class Customer {
     @Column()
     private String surname;
 
+    @Column()
+    private String name;
+
     @Column(nullable = false)
     private String password;
 
