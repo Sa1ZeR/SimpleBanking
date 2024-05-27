@@ -4,8 +4,10 @@ import com.sa1zer.simplebanking.facade.CustomerFacade;
 import com.sa1zer.simplebanking.payload.dto.CustomerDto;
 import com.sa1zer.simplebanking.payload.request.CreateCustomerRequest;
 import com.sa1zer.simplebanking.payload.request.CustomerSearchFilter;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +20,14 @@ public class ManagerController {
     private final CustomerFacade customerFacade;
 
     @PostMapping("create")
-    public CustomerDto createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
+    @Operation(description = "Создание нового пользователя")
+    public CustomerDto createCustomer(@Valid @RequestBody @ParameterObject CreateCustomerRequest request) {
         return customerFacade.createCustomer(request);
     }
 
     @GetMapping("search")
-    public List<CustomerDto> search(CustomerSearchFilter request) {
+    @Operation(description = "Поиск пользователей с фильтрацией")
+    public List<CustomerDto> search(@ParameterObject CustomerSearchFilter request) {
         return customerFacade.search(request);
     }
 }
