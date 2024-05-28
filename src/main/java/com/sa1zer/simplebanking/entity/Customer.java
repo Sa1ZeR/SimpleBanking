@@ -28,13 +28,6 @@ public class Customer {
     private String login;
 
     @Column(nullable = false)
-    private String firstname;
-    @Column(nullable = false)
-    private String lastname;
-    @Column()
-    private String surname;
-
-    @Column()
     private String name;
 
     @Column(nullable = false)

@@ -65,9 +65,7 @@ public class CustomerFacade {
                 .build();
 
         Customer customer = Customer.builder()
-                .firstname(request.firstname())
-                .lastname(request.lastname())
-                .surname(request.surname())
+                .name(request.name())
                 .password(bCryptPasswordEncoder.encode(request.password()))
                 .login(request.login())
                 .account(bankAccount)

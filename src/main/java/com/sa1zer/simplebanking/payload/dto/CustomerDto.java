@@ -9,9 +9,6 @@ import java.util.List;
 @Builder
 public record CustomerDto(
         Long id,
-        String firstname,
-        String lastname,
-        String surname,
         String name,
         String login,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy") LocalDate birthday,
