@@ -3,6 +3,13 @@ server:
     include-message: always
   port: 3000
 
+logging:
+  file:
+    name: logs.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+
 spring:
   application:
     name: SimpleBanking

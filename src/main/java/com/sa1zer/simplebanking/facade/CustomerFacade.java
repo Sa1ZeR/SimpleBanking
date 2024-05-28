@@ -173,6 +173,9 @@ public class CustomerFacade {
         customerBalance.setBalance(customerBalance.getBalance().subtract(request.value()));
         receiverBalance.setBalance(receiverBalance.getBalance().add(request.value()));
 
+        log.info("{} withdrew {} for {}", customer.getLogin(), request.value(), receiver.getLogin());
+        log.info("{} received {} from {}", receiver.getLogin(), request.value(), customer.getLogin());
+
         return "Balance successfully updated";
     }
 }
