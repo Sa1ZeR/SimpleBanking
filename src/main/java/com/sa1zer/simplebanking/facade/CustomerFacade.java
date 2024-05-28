@@ -154,6 +154,9 @@ public class CustomerFacade {
         Customer customer = customerService.findByLoginOrEmailLock(principal.getName(), principal.getName());
         Customer receiver = customerService.findByLoginOrEmailLock(request.login(), request.login());
 
+        if(customer.getLogin().equals(receiver.getLogin()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported");
+
         if(customer.getAccount().getBalance().compareTo(request.value()) < 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough money");
 
