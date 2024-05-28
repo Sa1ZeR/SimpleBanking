@@ -6,10 +6,7 @@ import com.sa1zer.simplebanking.entity.Email;
 import com.sa1zer.simplebanking.entity.Phone;
 import com.sa1zer.simplebanking.payload.dto.CustomerDto;
 import com.sa1zer.simplebanking.payload.mapper.CustomerMapper;
-import com.sa1zer.simplebanking.payload.request.CreateCustomerRequest;
-import com.sa1zer.simplebanking.payload.request.CustomerSearchFilter;
-import com.sa1zer.simplebanking.payload.request.EditContactsRequest;
-import com.sa1zer.simplebanking.payload.request.UpdateContactsRequest;
+import com.sa1zer.simplebanking.payload.request.*;
 import com.sa1zer.simplebanking.repo.CustomerRepo;
 import com.sa1zer.simplebanking.service.CustomerService;
 import com.sa1zer.simplebanking.service.PhoneService;
@@ -150,5 +147,25 @@ public class CustomerFacade {
     public List<CustomerDto> search(CustomerSearchFilter request) {
         return customerService.findAllByFilter(request).stream()
                 .map(customerMapper::map).toList();
+    }
+
+    @Transactional
+    public String transfer(TransferRequest request, Principal principal) {
+        Customer customer = customerService.findByLoginOrEmailLock(principal.getName(), principal.getName());
+        Customer receiver = customerService.findByLoginOrEmailLock(request.login(), request.login());
+
+        if(customer.getAccount().getBalance().compareTo(request.value()) < 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough money");
+
+        BankAccount customerBalance = customer.getAccount();
+        BankAccount receiverBalance = receiver.getAccount();
+
+        customerBalance.setBalance(customerBalance.getBalance().subtract(request.value()));
+        receiverBalance.setBalance(receiverBalance.getBalance().add(request.value()));
+
+        customerService.save(customer);
+        customerService.save(receiver);
+
+        return "Balance successfully updated";
     }
 }
