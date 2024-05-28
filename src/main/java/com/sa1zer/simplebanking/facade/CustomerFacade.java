@@ -7,14 +7,18 @@ import com.sa1zer.simplebanking.entity.Phone;
 import com.sa1zer.simplebanking.payload.dto.CustomerDto;
 import com.sa1zer.simplebanking.payload.mapper.CustomerMapper;
 import com.sa1zer.simplebanking.payload.request.*;
+import com.sa1zer.simplebanking.repo.BankAccountRepo;
 import com.sa1zer.simplebanking.repo.CustomerRepo;
 import com.sa1zer.simplebanking.service.CustomerService;
 import com.sa1zer.simplebanking.service.PhoneService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -33,6 +37,8 @@ public class CustomerFacade {
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
     private final PhoneService phoneService;
+    private final BankAccountRepo bankAccountRepo;
+    private final EntityManager entityManager;
 
     @Transactional
     public CustomerDto createCustomer(CreateCustomerRequest request) {
@@ -149,10 +155,11 @@ public class CustomerFacade {
                 .map(customerMapper::map).toList();
     }
 
-    @Transactional
+    @Transactional()
     public String transfer(TransferRequest request, Principal principal) {
-        Customer customer = customerService.findByLoginOrEmailLock(principal.getName(), principal.getName());
         Customer receiver = customerService.findByLoginOrEmailLock(request.login(), request.login());
+        Customer customer = customerService.findByLoginOrEmailLock(principal.getName(), principal.getName());
+        entityManager.refresh(receiver);
 
         if(customer.getLogin().equals(receiver.getLogin()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported");
@@ -165,9 +172,6 @@ public class CustomerFacade {
 
         customerBalance.setBalance(customerBalance.getBalance().subtract(request.value()));
         receiverBalance.setBalance(receiverBalance.getBalance().add(request.value()));
-
-        customerService.save(customer);
-        customerService.save(receiver);
 
         return "Balance successfully updated";
     }
